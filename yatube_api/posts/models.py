@@ -21,15 +21,16 @@ class Post(models.Model):
     image = models.ImageField(
         upload_to='posts/', null=True, blank=True)
     group = models.ForeignKey(
-        Group, on_delete=models.CASCADE,
+        Group, on_delete=models.RESTRICT,
         related_name="posts", blank=True, null=True
     )
 
     class Meta:
+        ordering = ['pub_date']
         verbose_name = 'Пост'
 
     def __str__(self):
-        return self.text
+        return (self.text[:15], self.image, self.group)
 
 
 class Comment(models.Model):
@@ -42,8 +43,11 @@ class Comment(models.Model):
         'Дата добавления', auto_now_add=True, db_index=True)
 
     class Meta:
-        ordering = ['-created']
+        ordering = ('-created', )
         verbose_name = 'Комментарий'
+
+    def __str__(self):
+        return self.text[:15]
 
 
 class Follow(models.Model):
@@ -63,3 +67,6 @@ class Follow(models.Model):
                 name='user_following'
             )
         ]
+
+    def __str__(self):
+        return self.following
