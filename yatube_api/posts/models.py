@@ -30,7 +30,7 @@ class Post(models.Model):
         verbose_name = 'Пост'
 
     def __str__(self):
-        return (self.text[:15], self.image, self.group)
+        return f'{self.text[:15]} {self.image} {self.group}'
 
 
 class Comment(models.Model):
@@ -67,6 +67,3 @@ class Follow(models.Model):
                 name='user_following'
             )
         ]
-
-    def __str__(self):
-        return self.following

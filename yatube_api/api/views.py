@@ -31,12 +31,13 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthorOrReadOnly, ]
 
     def get_queryset(self):
-        post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
-        return post.comments
+        return get_object_or_404(Post, pk=self.kwargs.get('post_id')).comments
 
     def perform_create(self, serializer):
-        post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
-        serializer.save(author=self.request.user, post=post)
+        serializer.save(
+            author=self.request.user,
+            post=get_object_or_404(Post, pk=self.kwargs.get('post_id'))
+        )
 
 
 class FollowViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
@@ -48,8 +49,7 @@ class FollowViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
     search_fields = ('following__username',)
 
     def get_queryset(self):
-        user = self.request.user
-        return user.follower
+        return self.request.user.follower
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
